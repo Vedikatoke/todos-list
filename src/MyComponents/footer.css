@@ -1,0 +1,9 @@
+*{
+    background-color:antiquewhite
+}
+.text-center{
+    text-align:center;
+    color:aliceblue;
+    background-color: black;
+    padding:10px;
+}
