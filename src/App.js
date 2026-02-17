@@ -1,49 +1,63 @@
-import logo from './logo.svg';
 import './App.css';
 import Header from "./MyComponents/Header";
-import {Todos} from "./MyComponents/Todos";
-import {Footer} from "./MyComponents/Footer";
-import {Addtodo} from "./MyComponents/Addtodo";
-import React, { useState } from 'react';
+import { Todos } from "./MyComponents/Todos";
+import { Footer } from "./MyComponents/Footer";
+import { Addtodo } from "./MyComponents/Addtodo";
+import React, { useState, useEffect } from 'react';
 
 function App() {
+
+    // Load todos from localStorage when app starts
+    const [todos, setTodos] = useState(() => {
+        let savedTodos = localStorage.getItem("todos");
+        if (savedTodos) {
+            return JSON.parse(savedTodos);
+        } else {
+            return [];
+        }
+    });
+
+    // Save todos to localStorage whenever todos change
+    useEffect(() => {
+        localStorage.setItem("todos", JSON.stringify(todos));
+    }, [todos]);
+
+    // Delete function
     const onDelete = (todo) => {
-        console.log("I am onDelete of todo", todo);
-        let index=todos.indexOf(todo);
-        // deleting this way in react does not work
-        // todos.splice(index,1);
-        // console.log("deleted",todos);
-        setTodos(todos.filter((e)=>{
-            return e!==todo;
+        console.log("Deleting todo:", todo);
+        setTodos(todos.filter((e) => {
+            return e !== todo;
         }));
-    }
-    const [todos, setTodos] = useState([
-        {
-            sno:1,
-            title:"Go to the market",
-            desc:"You need to go to the market to buy groceries"
-        },
-        {
-            sno:2,
-            title:"Go to the mall",
-            desc:"You need to go to the mall to buy clothes"   
+    };
 
-        },
-        {
-            sno:3,
-            title:"Go to the school",
-            desc:"You need to go to the school to drop the kids"
-        },
-    ]);
+    // Add function
+    const addTodo = (title, desc) => {
+        let sno;
+        if (todos.length === 0) {
+            sno = 1;
+        } else {
+            sno = todos[todos.length - 1].sno + 1;
+        }
 
-  return (
-     <>
-        <Header title="My Todos List" searchBar={true}/>
-        <Addtodo/>
-        <Todos todos={todos} onDelete={onDelete}/>
-        <Footer/>      
-     </>
-      );
+        const myTodo = {
+            sno: sno,
+            title: title,
+            desc: desc
+        };
+
+        setTodos([...todos, myTodo]);
+    };
+
+    return (
+        <>
+            <Header title="My Todos List" searchBar={true} />
+            <Addtodo addTodo={addTodo} />
+            <Todos todos={todos} onDelete={onDelete} />
+            <Footer />
+        </>
+    );
 }
 
 export default App;
+
+
